@@ -8,7 +8,7 @@
   <body>
     <div class="pageContainer">
       <header>
-        <nav class = "navegation">
+        <nav class="navegation">
           <a href="hijo.html">Consultar hijos</a>
           <a href="padre.html">Consultar padres</a>
         </nav>
@@ -39,7 +39,7 @@
             <button type="submit">Crear</button>
           </div>
           <div class="buttonContainer">
-            <input type="button" value="Actualizar" onclick="updatePerson()">
+            <input type="button" value="Actualizar" onclick="updatePerson()" />
           </div>
         </form>
       </div>
@@ -51,7 +51,7 @@
             <input id="ID_delete" name="ID" />
           </div>
           <div class="buttonContainer">
-            <input type="button" value="Eliminar" onclick="deletePerson()">
+            <input type="button" value="Eliminar" onclick="deletePerson()" />
           </div>
         </form>
       </div>
@@ -152,7 +152,7 @@
   }
 
   function deletePerson() {
-    const personData =  {id : document.getElementById("ID_delete").value}
+    const personData = { id: document.getElementById("ID_delete").value };
     const personDataJson = JSON.stringify(personData);
     fetch("http://127.0.0.7:3000/deletepadre", {
       method: "POST",
@@ -164,7 +164,7 @@
       refreshTable();
       document.getElementById("CreatePersonForm").reset();
     });
-  };
+  }
 
   function updatePerson() {
     const personData = {

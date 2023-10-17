@@ -79,9 +79,10 @@ async function savePersonInDB(ID, name, hijoDe, rol) {
       },
     });
     await client.connect();
-    
+
     if (rol == 1) {
-      query = "INSERT INTO hijos VALUES (" + ID + ", '" + name + "', " + hijoDe + ")";
+      query =
+        "INSERT INTO hijos VALUES (" + ID + ", '" + name + "', " + hijoDe + ")";
     } else {
       query = "INSERT INTO padres VALUES (" + ID + ", '" + name + "')";
     }
@@ -136,7 +137,7 @@ async function deletePersonFromDB(ID, rol) {
 
     table = rol == 1 ? "hijos" : "padres";
 
-    const query = "DELETE FROM " + table + " WHERE id = " + ID +"cascade";
+    const query = "DELETE FROM " + table + " WHERE id = " + ID + "cascade";
 
     console.log("se está ejecutando " + query);
     const res = await client.query(query);
@@ -161,7 +162,8 @@ async function updatePersonInDB(ID, name, hijoDe, rol) {
     await client.connect();
 
     if (rol == 1) {
-      query = "UPDATE hijos SET nombre = '" +
+      query =
+        "UPDATE hijos SET nombre = '" +
         name +
         "', hijode = " +
         hijoDe +
