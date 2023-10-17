@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bienestar</title>
+  </head>
+  <body>
+    <div class="pageContainer">
+      <header>
+        <nav id="cabecera">
+          <a href="hijo.html">Consultar hijos</a>
+          <a href="padre.html">Consultar padres</a>
+        </nav>
+      </header>
+      <div class="tabla">
+        <table id="personDataTable">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Hijo de</th>
+            </tr>
+          </thead>
+          <tbody id="personDataTableTbody"></tbody>
+        </table>
+      </div>
+      <div class="createPersonContainer">
+        <h1>Crear persona</h1>
+        <form id="CreatePersonForm">
+          <div>
+            <label for="ID">ID</label>
+            <input id="ID" name="ID" />
+          </div>
+          <div>
+            <label for="Name">Nombre</label>
+            <input id="Name" name="Name" />
+          </div>
+          <div>
+            <label for="hijoDe">Hijo de</label>
+            <input id="hijoDe" name="hijoDe" />
+          </div>
+          <div class="buttonContainer">
+            <button type="submit">Crear</button>
+          </div>
+          <div class="buttonContainer">
+            <input type="button" value="Actualizar" onclick="updatePerson()" />
+          </div>
+        </form>
+      </div>
+      <div class="DeletePersonContainer">
+        <h1>Eliminar persona</h1>
+        <form id="CreatePersonForm">
+          <div>
+            <label for="ID">ID</label>
+            <input id="ID_delete" name="ID" />
+          </div>
+          <div class="buttonContainer">
+            <input type="button" value="Eliminar" onclick="deletePerson()" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  nav > * {
+    display: block;
+    margin-top: 20px;
+    font-size: larger;
+  }
+
+  .pageContainer {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  #CreatePersonForm > * {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  #CreatePersonForm {
+    text-align: right;
+  }
+
+  .buttonContainer {
+    display: inline;
+    text-align: center;
+  }
+
+  tr > * {
+    padding: 10px;
+    border: 1px solid red;
+    text-align: center;
+  }
+</style>
+
+<script>
+  const form = document.getElementById("CreatePersonForm");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const personData = eventToPerson(event);
+    const personDataJson = JSON.stringify(personData);
+    fetch("http://127.0.0.7:3000/hijo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: personDataJson,
+    }).then((result) => {
+      refreshTable();
+      document.getElementById("CreatePersonForm").reset();
+    });
+  });
+
+  function deletePerson() {
+    const personData = { id: document.getElementById("ID_delete").value };
+    const personDataJson = JSON.stringify(personData);
+    fetch("http://127.0.0.7:3000/deletehijo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: personDataJson,
+    }).then((result) => {
+      refreshTable();
+      document.getElementById("CreatePersonForm").reset();
+    });
+  }
+
+  function updatePerson() {
+    const personData = {
+      id: document.getElementById("ID").value,
+      name: document.getElementById("Name").value,
+      hijoDe: document.getElementById("hijoDe").value,
+    };
+    const personDataJson = JSON.stringify(personData);
+    fetch("http://127.0.0.7:3000/updatehijo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: personDataJson,
+    }).then((result) => {
+      refreshTable();
+      document.getElementById("CreatePersonForm").reset();
+    });
+  }
+
+  function eventToPerson(event) {
+    const elements = event.target.elements;
+    const id = elements.ID.value;
+    const name = elements.Name.value;
+    const hijoDe = elements.hijoDe.value;
+    return {
+      id: id,
+      name: name,
+      hijoDe: hijoDe,
+    };
+  }
+
+  async function refreshTable() {
+    const people = await getPeopleFromAPI();
+    drawPeopleTable(people);
+  }
+
+  async function getPeopleFromAPI() {
+    const response = await fetch("http://127.0.0.7:3000/hijo");
+    const people = await response.json();
+    return people;
+  }
+
+  async function drawPeopleTable(people) {
+    document.getElementById("personDataTableTbody").innerHTML = "";
+    people.forEach((person) => {
+      addPersonToTable(person);
+    });
+  }
+
+  function addPersonToTable(person) {
+    const personDataTable = document.getElementById("personDataTableTbody");
+
+    const row = personDataTable.insertRow(-1);
+
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+    const cell3 = row.insertCell(2);
+
+    cell1.innerHTML = person.id;
+    cell2.innerHTML = person.nombre;
+    cell3.innerHTML = person.hijode;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    refreshTable();
+  });
+</script>
