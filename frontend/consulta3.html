@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bienestar</title>
+  </head>
+  <body>
+    <div class="pageContainer">
+      <header>
+        <nav class="navegation">
+          <a href="hijo.html">Consultar hijos</a>
+          <a href="padre.html">Consultar padres</a>
+          <a href="consulta1.html">Consulta 1</a>
+          <a href="consulta2.html">Consulta 2</a>
+          <a href="consulta3.html">Consulta 3</a>
+          <a href="consulta4.html">Consulta 4</a>
+        </nav>
+      </header>
+      <div class="tabla">
+        <table id="personDataTable">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Nombre</th>
+            </tr>
+          </thead>
+          <tbody id="personDataTableTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  nav > * {
+    display: block;
+    margin-top: 20px;
+    font-size: larger;
+  }
+
+  .pageContainer {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  #CreatePersonForm > * {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  #CreatePersonForm {
+    text-align: right;
+  }
+
+  .buttonContainer {
+    display: inline;
+    text-align: center;
+  }
+
+  tr > * {
+    padding: 10px;
+    border: 1px solid red;
+    text-align: center;
+  }
+</style>
+
+<script>
+
+  async function refreshTable() {
+    const people = await getPeopleFromAPI();
+    drawPeopleTable(people);
+  }
+
+  async function getPeopleFromAPI() {
+    const response = await fetch("http://127.0.0.7:3000/hijosSinPadre");
+    const people = await response.json();
+    return people;
+  }
+
+  async function drawPeopleTable(people) {
+    document.getElementById("personDataTableTbody").innerHTML = "";
+    people.forEach((person) => {
+      addPersonToTable(person);
+    });
+  }
+
+  function addPersonToTable(person) {
+    const personDataTable = document.getElementById("personDataTableTbody");
+
+    const row = personDataTable.insertRow(-1);
+
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+
+    cell1.innerHTML = person.id;
+    cell2.innerHTML = person.nombre;
+  }
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    refreshTable();
+  });
+</script>

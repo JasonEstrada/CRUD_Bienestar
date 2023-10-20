@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
-const { Client } = require("pg");
+const { Client, Query } = require("pg");
 
 const port = 3000;
+
+var ID_global = 0;
 
 const app = express();
 app.use(cors());
@@ -52,13 +54,42 @@ app.post("/updatepadre", (req, res) => {
   res.send("Hello World!");
 });
 
+
+app.get("/searchHijos", async (req, res) => {
+  const personData = req.body;
+  const people = await getPerson(1, personData.id);
+  res.send(people);
+});
+
+
 app.get("/hijo", async (req, res) => {
   const people = await getPersonFromDB(1);
   res.send(people);
 });
 
+app.get("/cantidadHijos", async (req, res) => {
+  const people = await getCantidadHijos();
+  res.send(people);
+});
+
 app.get("/padre", async (req, res) => {
   const people = await getPersonFromDB(2);
+  res.send(people);
+});
+
+app.get("/padresSinHijos", async (req, res) => {
+  const people = await getPadresSinHijos();
+  res.send(people);
+});
+
+app.get("/hijosSinPadre", async (req, res) => {
+  const people = await getHijosSinPadres();
+  res.send(people);
+});
+
+
+app.get("/padresSinHijos", async (req, res) => {
+  const people = await getPadresSinHijos();
   res.send(people);
 });
 
@@ -176,6 +207,114 @@ async function updatePersonInDB(ID, name, hijoDe, rol) {
     console.log("se está ejecutando " + query);
     const res = await client.query(query);
     await client.end();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getPadresSinHijos() {
+  try {
+    const client = new Client({
+      user: "uvqnibk4oetsi28neyqz",
+      host: "bnwbml3w99h2zdpusmvq-postgresql.services.clever-cloud.com",
+      database: "bnwbml3w99h2zdpusmvq",
+      password: "tx5nlO01Y9saca3iLCTXmpK8pgqFLk",
+      port: 5432,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+    await client.connect();
+
+    const query = "SELECT DISTINCT(padres.id), padres.nombre FROM padres LEFT JOIN hijos ON padres.id = hijos.hijode WHERE hijos.hijode IS NULL ORDER BY id;"
+
+    console.log("Se está ejecutando "+query);
+    const res = await client.query(query);
+
+    await client.end();
+    return res.rows;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getPerson(rol, ID) {
+  try {
+    const client = new Client({
+      user: "uvqnibk4oetsi28neyqz",
+      host: "bnwbml3w99h2zdpusmvq-postgresql.services.clever-cloud.com",
+      database: "bnwbml3w99h2zdpusmvq",
+      password: "tx5nlO01Y9saca3iLCTXmpK8pgqFLk",
+      port: 5432,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+    await client.connect();
+
+    table = rol == 1 ? "hijos" : "padres";
+
+    const query = "SELECT id, nombre FROM " + table + " WHERE hijode = " + ID + " ORDER BY id";
+
+    console.log("se está ejecutando " + query);
+    const res = await client.query(query);
+    await client.end();
+    return res.rows;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getHijosSinPadres() {
+  try {
+    const client = new Client({
+      user: "uvqnibk4oetsi28neyqz",
+      host: "bnwbml3w99h2zdpusmvq-postgresql.services.clever-cloud.com",
+      database: "bnwbml3w99h2zdpusmvq",
+      password: "tx5nlO01Y9saca3iLCTXmpK8pgqFLk",
+      port: 5432,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+    await client.connect();
+
+    const query = "SELECT id, nombre FROM hijos WHERE hijode IS NULL ORDER BY id;"
+
+    console.log("Se está ejecutando "+query);
+    const res = await client.query(query);
+
+    await client.end();
+    return res.rows;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getCantidadHijos() {
+  try {
+    const client = new Client({
+      user: "uvqnibk4oetsi28neyqz",
+      host: "bnwbml3w99h2zdpusmvq-postgresql.services.clever-cloud.com",
+      database: "bnwbml3w99h2zdpusmvq",
+      password: "tx5nlO01Y9saca3iLCTXmpK8pgqFLk",
+      port: 5432,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+    await client.connect();
+
+    const query = `SELECT c.id_padre as id, padres.nombre as nombre, c.cantidad_hijos as cantidad_hijos
+    FROM padres INNER JOIN (SELECT hijos.hijode AS id_padre,COUNT(hijos.id) AS cantidad_hijos 
+    FROM padres INNER JOIN hijos ON padres.id = hijos.hijode GROUP BY hijode) AS c 
+    ON padres.id = c.id_padre ORDER BY padres.id`
+
+    console.log("Se está ejecutando "+query);
+    const res = await client.query(query);
+
+    await client.end();
+    return res.rows;
   } catch (error) {
     console.log(error);
   }
