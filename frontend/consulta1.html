@@ -1,168 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bienestar</title>
-  </head>
-  <body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
     <div class="pageContainer">
-      <header>
-        <nav class="navegation">
-          <a href="hijo.html">Consultar hijos</a>
-          <a href="padre.html">Consultar padres</a>
-          <a href="consulta1.html">Consulta 1</a>
-          <a href="consulta2.html">Consulta 2</a>
-          <a href="consulta3.html">Consulta 3</a>
-          <a href="consulta4.html">Consulta 4</a>
-        </nav>
-      </header>
-      <div class="tabla">
-        <table id="personDataTable">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-            </tr>
-          </thead>
-          <tbody id="personDataTableTbody"></tbody>
-        </table>
-      </div>
-      <div class="tablaHijos">
-        <table id="personDataTableHijos">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Nombre</th>
-            </tr>
-          </thead>
-          <tbody id="personDataTableHijosTbody"></tbody>
-        </table>
-      </div>
-      <div class="SearchPersonContainer">
-        <h1>Buscar hijos</h1>
-        <form id="CreatePersonForm">
-          <div>
-            <label for="ID">ID del padre</label>
-            <input id="ID_search" name="ID" />
-          </div>
-          <div class="buttonContainer">
-            <input type="button" value="Buscar" onclick="searchPerson()" />
-          </div>
-        </form>
-      </div>
+        <header>
+            <nav class="navegation">
+                <a href="hijo.html">Consultar hijos</a>
+                <a href="padre.html">Consultar padres</a>
+                <a href="consulta1.html">Consulta 1</a>
+                <a href="consulta2.html">Consulta 2</a>
+                <a href="consulta3.html">Consulta 3</a>
+                <a href="consulta4.html">Consulta 4</a>
+            </nav>
+        </header>
+        <div class="tabla">
+            <table id="personDataTable">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nombre</th>
+                    </tr>
+                </thead>
+                <tbody id="personDataTableTbody"></tbody>
+            </table>
+        </div>
+        <div class="DeletePersonContainer">
+            <h1>Show</h1>
+            <form id="CreatePersonForm">
+                <div>
+                    <label for="ID">ID</label>
+                    <input id="ID_show" name="ID" />
+                </div>
+                <div class="buttonContainer">
+                    <input type="button" value="Mostrar información" onclick="showPerson()" />
+                </div>
+            </form>
+        </div>
+        <div class="tabla">
+            <table id="personDataTableHijos">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nombre</th>
+                    </tr>
+                </thead>
+                <tbody id="personDataTableHijosTbody"></tbody>
+            </table>
+        </div>
     </div>
-  </body>
+</body>
+
 </html>
 
 <style>
-  nav > * {
-    display: block;
-    margin-top: 20px;
-    font-size: larger;
-  }
+    nav>* {
+        display: block;
+        margin-top: 20px;
+        font-size: larger;
+    }
 
-  .pageContainer {
-    display: flex;
-    justify-content: space-evenly;
-  }
+    .pageContainer {
+        display: flex;
+        justify-content: space-evenly;
+    }
 
-  #CreatePersonForm > * {
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
+    #CreatePersonForm>* {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
-  #CreatePersonForm {
-    text-align: right;
-  }
+    #CreatePersonForm {
+        text-align: left;
+    }
 
-  .buttonContainer {
-    display: inline;
-    text-align: center;
-  }
+    .buttonContainer {
+        display: inline;
+        text-align: center;
+    }
 
-  tr > * {
-    padding: 10px;
-    border: 1px solid red;
-    text-align: center;
-  }
+    tr>* {
+        padding: 10px;
+        border: 1px solid red;
+        text-align: center;
+    }
 </style>
 
 <script>
+    const form = document.getElementById("CreatePersonForm");
 
-  function eventToPerson(event) {
-    const elements = event.target.elements;
-    const id = elements.ID.value;
-    const name = elements.Name.value;
-    return {
-      id: id,
-      name: name,
-    };
-  }
-
-  async function refreshTable(src, tableID) {
-    const people = await getPeopleFromAPI(src);
-    drawPeopleTable(people, tableID);
-  }
-
-  async function getPeopleFromAPI(src) {
-    const response = await fetch(src);
-    const people = await response.json();
-    return people;
-  }
-
-  async function drawPeopleTable(people, tableID) {
-    document.getElementById(tableID).innerHTML = "";
-    people.forEach((person) => {
-      addPersonToTable(person, tableID);
-    });
-  }
-
-  function addPersonToTable(person, tableID) {
-    const personDataTable = document.getElementById(tableID);
-
-    const row = personDataTable.insertRow(-1);
-
-    const cell1 = row.insertCell(0);
-    const cell2 = row.insertCell(1);
-
-    cell1.innerHTML = person.id;
-    cell2.innerHTML = person.nombre;
-  }
-
-
-
-  function searchPerson() {
-    /*const personData = { id: document.getElementById("ID_search").value };
-    const personDataJson = JSON.stringify(personData);
-    fetch("http://127.0.0.7:3000/searchHijos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: personDataJson,
-    }).then((result) => {
-      refreshTable("http://127.0.0.7:3000/searchHijos", "personDataTableHijoTbody");
-      document.getElementById("CreatePersonForm").reset();
-    });*/
-
-
-    const personData = { id: document.getElementById("ID_search").value };
-    const personDataJson = JSON.stringify(personData);
-    fetch("http://127.0.0.7:3000/searchHijos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: personDataJson,
-    }).then((result) => {
-      refreshTable("http://127.0.0.7:3000/searchHijos", "personDataTableHijoTbody");
-      document.getElementById("CreatePersonForm").reset();
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const personData = eventToPerson(event);
+        const personDataJson = JSON.stringify(personData);
+        fetch("http://127.0.0.7:3000/padre", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: personDataJson,
+        }).then((result) => {
+            refreshTable();
+            document.getElementById("CreatePersonForm").reset();
+        });
     });
 
-  }
+    function eventToPerson(event) {
+        const elements = event.target.elements;
+        const id = elements.ID.value;
+        const name = elements.Name.value;
+        return {
+            id: id,
+            name: name,
+        };
+    }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    refreshTable("http://127.0.0.7:3000/padre", "personDataTableTbody");
-  });
+    async function refreshTable() {
+        const people = await getPeopleFromAPI();
+        drawPeopleTable(people);
+    }
+
+    async function getPeopleFromAPI() {
+        const response = await fetch("http://127.0.0.7:3000/padre");
+        const people = await response.json();
+        return people;
+    }
+
+    async function drawPeopleTable(people) {
+        document.getElementById("personDataTableTbody").innerHTML = "";
+        people.forEach((person) => {
+            addPersonToTable(person);
+        });
+    }
+
+    function addPersonToTable(person) {
+        const personDataTable = document.getElementById("personDataTableTbody");
+
+        const row = personDataTable.insertRow(-1);
+
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+
+        cell1.innerHTML = person.id;
+        cell2.innerHTML = person.nombre;
+    }
+
+    function deletePerson() {
+        const personData = { id: document.getElementById("ID_delete").value };
+        const personDataJson = JSON.stringify(personData);
+        fetch("http://127.0.0.7:3000/deletepadre", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: personDataJson,
+        }).then((result) => {
+            refreshTable();
+            document.getElementById("CreatePersonForm").reset();
+        });
+    }
+
+    function updatePerson() {
+        const personData = {
+            id: document.getElementById("ID").value,
+            name: document.getElementById("Name").value,
+        };
+        const personDataJson = JSON.stringify(personData);
+        fetch("http://127.0.0.7:3000/updatepadre", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: personDataJson,
+        }).then((result) => {
+            refreshTable();
+            document.getElementById("CreatePersonForm").reset();
+        });
+    }
+
+    function showPerson() {
+        const personData = { id: document.getElementById("ID_show").value }
+        const personDataJson = JSON.stringify(personData);
+
+        getPersonFromAPI(personData.id)
+    }
+
+
+    async function getPersonFromAPI(personSID) {
+        const response = await fetch("http://127.0.0.7:3000/padre");
+        const people = await response.json();
+
+        people.forEach((person) => {
+            if (person.id == personSID) {
+                refreshTable2(person.id)
+            }
+        });
+    }
+
+    async function refreshTable2(padreID) {
+        const people = await getPeople2FromAPI();
+        drawPeopleTable2(people, padreID);
+    }
+
+    async function getPeople2FromAPI() {
+        const response = await fetch("http://127.0.0.7:3000/hijo");
+        const people = await response.json();
+        return people;
+    }
+
+    async function drawPeopleTable2(people, padreID) {
+        document.getElementById("personDataTableHijosTbody").innerHTML = "";
+        people.forEach((person) => {
+            if (person.hijode == padreID) {
+                addPersonToTable2(person);
+            }
+        });
+    }
+
+    function addPersonToTable2(person) {
+        const personDataTable = document.getElementById("personDataTableHijosTbody");
+
+        const row = personDataTable.insertRow(-1);
+
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
+
+        cell1.innerHTML = person.id;
+        cell2.innerHTML = person.nombre;
+        cell3.innerHTML = person.hijode;
+    }
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        refreshTable();
+    });
+
+
 </script>
