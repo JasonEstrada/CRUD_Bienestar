@@ -168,7 +168,7 @@ async function deletePersonFromDB(ID, rol) {
 
     table = rol == 1 ? "hijos" : "padres";
 
-    const query = "DELETE FROM " + table + " WHERE id = " + ID + "cascade";
+    const query = "DELETE FROM " + table + " WHERE id = " + ID;
 
     console.log("se está ejecutando " + query);
     const res = await client.query(query);

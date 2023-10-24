@@ -13,10 +13,10 @@
             <nav class="navegation">
                 <a href="hijo.html">Consultar hijos</a>
                 <a href="padre.html">Consultar padres</a>
-                <a href="consulta1.html">Consulta 1</a>
-                <a href="consulta2.html">Consulta 2</a>
-                <a href="consulta3.html">Consulta 3</a>
-                <a href="consulta4.html">Consulta 4</a>
+                <a href="consulta1.html">Consulta 1: Padres disponibles y su hijos asociados</a>
+                <a href="consulta2.html">Consulta 2: Padres que no tienen hijos</a>
+                <a href="consulta3.html">Consulta 3: Hijos que no tienen padres</a>
+                <a href="consulta4.html">Consulta 4: Padres con su cantidad de hijos </a>
             </nav>
         </header>
         <div class="tabla">
@@ -31,14 +31,14 @@
             </table>
         </div>
         <div class="DeletePersonContainer">
-            <h1>Show</h1>
+            <h1>Buscar hijos</h1>
             <form id="CreatePersonForm">
                 <div>
                     <label for="ID">ID</label>
                     <input id="ID_show" name="ID" />
                 </div>
                 <div class="buttonContainer">
-                    <input type="button" value="Mostrar información" onclick="showPerson()" />
+                    <input type="button" value="Buscar" onclick="showPerson()" />
                 </div>
             </form>
         </div>
@@ -229,11 +229,9 @@
 
         const cell1 = row.insertCell(0);
         const cell2 = row.insertCell(1);
-        const cell3 = row.insertCell(2);
 
         cell1.innerHTML = person.id;
         cell2.innerHTML = person.nombre;
-        cell3.innerHTML = person.hijode;
     }
 
 
